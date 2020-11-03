@@ -4,7 +4,7 @@
 ## How to Run
 1. Install Scrapy dependencies.
 ```sh
-$ pipenv install --python 3.7 install
+$ pipenv install --dev --python 3.7
 ```
 
 2. Run the sample spider.
