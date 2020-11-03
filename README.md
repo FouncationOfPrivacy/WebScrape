@@ -1,4 +1,4 @@
-# WebScrapy
+# WebScrape
 
 
 ## How to Run
