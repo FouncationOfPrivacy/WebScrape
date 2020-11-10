@@ -12,7 +12,6 @@ if os.path.isdir(sys.argv[3]):
 	shutil.rmtree(sys.argv[3])
 os.mkdir(sys.argv[3])
 
-
 # 5001_to_100000_sites.json
 with open(sys.argv[2], 'r') as hdle:
 	urls = json.load(hdle)
@@ -32,10 +31,23 @@ for url in urls:
 	os.system(f'scrapy runspider control_crawl.py -a url={url} -a output_pathname={output_pathname} -a depth=3')
 
 # merge all url
-with open(f'{sys.argv[3]}/allUrl.txt', 'a') as allUrl:
+with open(f'{sys.argv[3]}/allUrl.txt', 'a+') as allUrl:
 	for subdir in os.listdir(sys.argv[3]):
 		path = f'{sys.argv[3]}/{subdir}/url.txt'
 
 		if os.path.exists(path):
 			with open(path, 'r') as eachUrl:
 				allUrl.write(eachUrl.read())
+
+# unique allUrl
+with open(f'{sys.argv[3]}/allUrl.txt', 'r') as allUrl:
+	urls = []
+
+	for line in allUrl:
+		urls.append(line)
+
+	urls = list(set(urls))
+
+with open(f'{sys.argv[3]}/allUniqueUrl.txt', 'a') as allUniqueUrl:
+	for url in urls:
+		allUniqueUrl.write(url)
