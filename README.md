@@ -10,5 +10,5 @@ $ pipenv install --dev --python 3.7
 2. Run the sample spider.
 ```sh
 $ pipenv shell
-$ scrapy runspider crawl.py -a seeds_pathname=example.json -a output_pathname=./example -a depth=3
+$ python3 controller.py top_5000_sites.json 5001_to_100000_sites.json ../data
 ```
