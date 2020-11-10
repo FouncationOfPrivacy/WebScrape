@@ -7,7 +7,7 @@ class CrawlSpider(scrapy.Spider):
     name = 'control_crawl'
 
     def __init__(self, url=None, output_pathname=None, depth=None):
-        self.count = 0
+        self.count = -1
         self.depth = int(depth)
         self.output_pathname = output_pathname
         self.start_urls = [f'https://{url}']
@@ -21,9 +21,6 @@ class CrawlSpider(scrapy.Spider):
         self.url_collection_pathname = os.path.join(output_pathname, 'url.txt')
 
     def parse(self, response):
-        if self.count == self.depth:
-            return
-
         page = response.url.split('/')[-2]
         filename = f'{page}.html'
         pathname = os.path.join(self.output_pathname, filename)
@@ -36,6 +33,9 @@ class CrawlSpider(scrapy.Spider):
             hdle.write(url)
 
         for href in response.xpath('//a/@href').getall():
-            yield scrapy.Request(response.urljoin(href), self.parse)
+            self.count += 1
 
-        self.count += 1
+            if self.count > self.depth:
+                return
+
+            yield scrapy.Request(response.urljoin(href), self.parse)
