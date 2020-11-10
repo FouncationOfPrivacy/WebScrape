@@ -12,16 +12,15 @@ if os.path.isdir(sys.argv[3]):
 	shutil.rmtree(sys.argv[3])
 os.mkdir(sys.argv[3])
 
-
 # 5001_to_100000_sites.json
-# with open(sys.argv[2], 'r') as hdle:
-# 	urls = json.load(hdle)
+with open(sys.argv[2], 'r') as hdle:
+	urls = json.load(hdle)
 
-# urls = random.choices(urls, k=5000)
+urls = random.choices(urls, k=5000)
 
-# for url in urls:
-# 	output_pathname = f'{sys.argv[3]}/{url}'
-# 	os.system(f'scrapy runspider control_crawl.py -a url={url} -a output_pathname={output_pathname} -a depth=3')
+for url in urls:
+	output_pathname = f'{sys.argv[3]}/{url}'
+	os.system(f'scrapy runspider control_crawl.py -a url={url} -a output_pathname={output_pathname} -a depth=3')
 
 # top_5000_sites.json
 with open(sys.argv[1], 'r') as hdle:
