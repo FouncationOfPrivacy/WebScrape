@@ -6,6 +6,7 @@ import shutil
 
 class CrawlSpider(scrapy.Spider):
     name = 'crawl'
+    allowed_domains = ['cmu.edu']
 
     def __init__(self, seeds_pathname=None, output_pathname=None, depth=None):
 
@@ -38,6 +39,7 @@ class CrawlSpider(scrapy.Spider):
 
         if self.count == self.depth:
             return
+        self.count += 1
 
         page = response.url.split('/')[-2]
         filename = f'{page}.html'
@@ -50,7 +52,6 @@ class CrawlSpider(scrapy.Spider):
         with open(self.url_collection_pathname, 'a+') as hdle:
             hdle.write(url)
 
-        for href in response.xpath('//a/@href').getall():
+        hrefs = response.xpath('//a/@href').getall()
+        for href in sorted(hrefs)[:3]:
             yield scrapy.Request(response.urljoin(href), self.parse)
-
-        self.count += 1
