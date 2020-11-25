@@ -42,6 +42,8 @@ def main():
     end = begin + size_segment
     seeds_segment = seeds[begin:end]
 
+    run_scrapy(seeds_segment, args.output)
+
 
 if __name__ == '__main__':
     main()
