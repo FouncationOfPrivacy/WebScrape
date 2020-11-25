@@ -6,48 +6,43 @@ import sys
 import json
 import shutil
 import random
+import argparse
 
-# add data directory
-if os.path.isdir(sys.argv[3]):
-	shutil.rmtree(sys.argv[3])
-os.mkdir(sys.argv[3])
 
-# 5001_to_100000_sites.json
-with open(sys.argv[2], 'r') as hdle:
-	urls = json.load(hdle)
+def run_scrapy(seeds, output):
+    for url in seeds:
+        output_pathname = os.path.join(output, url)
+        os.system(f'scrapy runspider control_crawl.py'
+                    f' -a url={url}'
+                    f' -a output_pathname={output_pathname}'
+                    f' -a depth=3')
 
-urls = random.choices(urls, k=5000)
 
-for url in urls:
-	output_pathname = f'{sys.argv[3]}/{url}'
-	os.system(f'scrapy runspider control_crawl.py -a url={url} -a output_pathname={output_pathname} -a depth=3')
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_segment')
+    parser.add_argument('--index')
+    parser.add_argument('--seed')
+    parser.add_argument('--output')
 
-# top_5000_sites.json
-with open(sys.argv[1], 'r') as hdle:
-	urls = json.load(hdle)
+    args = parser.parse_args()
+    if not args.num_segment or not args.index or not args.seed or not args.output:
+        parser.print_help()
+        return
 
-for url in urls:
-	output_pathname = f'{sys.argv[3]}/{url}'
-	os.system(f'scrapy runspider control_crawl.py -a url={url} -a output_pathname={output_pathname} -a depth=3')
+    index = int(args.index)
+    num_segment = int(args.num_segment)
+    seeds = []
+    with open(args.seed, 'r') as hdle:
+        seeds = json.load(hdle)
 
-# merge all url
-with open(f'{sys.argv[3]}/allUrl.txt', 'a+') as allUrl:
-	for subdir in os.listdir(sys.argv[3]):
-		path = f'{sys.argv[3]}/{subdir}/url.txt'
+    total = len(seeds)
+    size_segment = int(total / num_segment)
+    begin = index * size_segment
+    end = begin + size_segment
+    seeds_segment = seeds[begin:end]
 
-		if os.path.exists(path):
-			with open(path, 'r') as eachUrl:
-				allUrl.write(eachUrl.read())
 
-# unique allUrl
-with open(f'{sys.argv[3]}/allUrl.txt', 'r') as allUrl:
-	urls = []
+if __name__ == '__main__':
+    main()
 
-	for line in allUrl:
-		urls.append(line)
-
-	urls = list(set(urls))
-
-with open(f'{sys.argv[3]}/allUniqueUrl.txt', 'a') as allUniqueUrl:
-	for url in urls:
-		allUniqueUrl.write(url)
