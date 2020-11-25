@@ -10,6 +10,11 @@ import argparse
 
 
 def run_scrapy(seeds, output):
+
+    if os.path.isdir(output):
+        shutil.rmtree(output)
+    os.mkdir(output)
+
     for url in seeds:
         output_pathname = os.path.join(output, url)
         os.system(f'scrapy runspider control_crawl.py'
