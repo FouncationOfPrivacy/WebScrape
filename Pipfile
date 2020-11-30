@@ -9,6 +9,7 @@ verify_ssl = true
 scrapy = "*"
 install = "*"
 gitpython = "*"
+pydriller = "*"
 
 [requires]
 python_version = "3.7"
