@@ -33,31 +33,42 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo')
     parser.add_argument('--output')
+    parser.add_argument('--month')
+    parser.add_argument('--period')
 
     args = parser.parse_args()
-    if not args.repo or not args.output:
+    if not args.repo or not args.output or not args.month or not args.period:
         parser.print_help()
         return
 
-    dates = []
-    for i in range(1, 30):
-        dates.append(i)
+    month = int(args.month)
+    period = int(args.period)
+
+    ranges = []
+    bgn = 1
+    while bgn < period:
+        end = min(bgn + 6, period)
+        ranges.append([bgn, end])
+        bgn += 7
 
     report = {}
-
-    for date in dates:
-        begin = datetime.datetime(2020, 11, date, 0, 0)
-        end = datetime.datetime(2020, 11, date, 23, 59)
-        print(f'Process {date}th day...')
+    index = 1
+    for range in ranges:
+        bgn = range[0]
+        end = range[1]
+        begin = datetime.datetime(2020, month, bgn, 0, 0)
+        end = datetime.datetime(2020, month, end, 23, 59)
+        print(f'Process the {index}th week...')
         lines = parse_by_date(args.repo, begin, end)
 
-        path = os.path.join(args.output, f'{date}th')
+        path = os.path.join(args.output, f'{index}th.txt')
         with open(path, 'w') as hdle:
             for line in lines:
                 out_line = f'{line}\n'
                 hdle.write(out_line)
 
-        report[date] = len(lines)
+        report[index] = len(lines)
+        index += 1
 
     path = os.path.join(args.output, 'report.json')
     with open(path, 'w') as hdle:
